@@ -1,0 +1,8 @@
+numpy
+pandas
+pymongo
+scikit-learn
+flask=2.0.3
+flask-restful=0.3.9
+flask-cors=3.0.10
+pytorch
