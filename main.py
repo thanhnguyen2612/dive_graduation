@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_restful import Api
 from flask_cors import CORS
+import sys
 
 from src.interface import *
 
@@ -10,43 +11,35 @@ api = Api(app)
 
 
 @app.route("/inference", methods=["POST"])
-def inference_by_time():
+def normal_inference():
     """
-    Input:
-    - Dict(segment_id: List, time: List)
-    - Dict(segment_id: List, time: int)
-
-    Output:
-    - Dict(segment_id: List, LOS: List)
+    @params
+    - Dict(segment_ids: List, timestamp: int | List)
+    @return
+    - Dict(segment_ids: List, LOSes: List)
     """
     req = request.json  # dictionary
-    if type(req["time"]) is not list:
-        req["time"] = [req["time"]] * len(req["asegment_id"])
-    return time_inference(req)
-
-
-@app.route("/period_inference", methods=["POST"])
-def inference_by_period():
-    """
-    Input:
-    - Dict(segment_id: List, date: str, period: List)
-    - Dict(segment_id: List, date: str, period: str)
-
-    Output:
-    - Dict(segment_id: List, LOS: List)
-    """
-    req = request.json  # dictionary
-    req["date"] = [req["date"]] * len(req["segment_id"])
-    if type(req["period"]) is not list:
-        req["period"] = [req["period"]] * len(req["segment_id"])
-    return period_inference(req)
-
+    try:
+        return inference(req)
+    except Exception as e:
+        print(e, file=sys.stderr)
+        return 'Failed'
 
 @app.route("/seq_inference", methods=["POST"])
 def seq_inference():
+    """
+    @params:
+    - Dict(segment_ids: List, timestamp: int)
+    @return:
+    - Dict(segment_ids: List, LOSes: List)
+    """
     req = request.json
-    return sequence_inference(req)
+    try:
+        return sequence_inference(req)
+    except Exception as e:
+        print(e, file=sys.stderr)
+        return 'Failed'
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000, debug=True)
