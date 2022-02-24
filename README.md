@@ -44,7 +44,7 @@ conda env export --name dive_graduation > conda.yml
 
 <br />
 
-## 2. Preprocessing data
+## 2. Data preparation
 
 Run the following scripts in order to preprocess data
 
@@ -66,11 +66,44 @@ python preprocess/preprocess_segment_status/process_4.py
 python preprocess/preprocess_segment_report/process_1.py
 python preprocess/preprocess_segment_report/process_2.py
 python preprocess/preprocess_segment_report/process_3.py
-
-# Split dataset
-python preprocess/split_train_test_dataset.py
 ```
+After preprocessing datasets, zip and upload to Google Drive; then train the model
 
 ## 3. Train and evaluate model (Google Colab)
 
 <https://github.com/thanhnguyen2612/diveintocode-ml/blob/master/ITS_DL_bigdata.ipynb>
+
+After training model, download the model and encoders into src.
+
+Structure of repository:
+|Path|Description|
+|---|---|
+| data_origin | data dumped directly from database (MongoDB) |
+| dataset/ | folder contains preprocessed data in **Data preparation** |
+| dataset/segments.csv | combined information related to segments (id, length, geolocation, street properties, etc.) |
+| preprocess/ | scripts to preprocessing original data to useful data for train/test |
+| src/ | main source code to serve the model |
+| src/encoders/ | encoders exported after training (*.pickle) |
+| src/model/ | model exported after training and evaluating best model |
+| src/model.py | define neural network model for serving prediction |
+| src/interface.py | interface to use model |
+| src/utils.py | helper functions |
+| main.py | flask app runner |
+
+## 4. Run flask APIs
+Start Flask app (default at **localhost:8000**)
+```
+python main.py
+```
+
+Lets test the API with **curl**
+### 4.1. Inference
+```
+curl -d '{"segment_ids":[1, 2, 3],"timestamp":1645671708000}' -H 'Content-Type: application/json' http://localhost:8000/inference
+curl -d '{"segment_ids":[1, 2, 3],"timestamp":[1645671708000, 1645674288000]}' -H 'Content-Type: application/json' http://localhost:8000/inference
+```
+
+### 4.2. Sequence Inference
+```
+curl -d '{"segment_ids":[1, 2, 3, 4, 5, 6],"timestamp":1645671708000}' -H 'Content-Type: application/json' http://localhost:8000/seq_inference
+```
