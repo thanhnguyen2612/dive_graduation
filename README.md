@@ -107,3 +107,7 @@ curl -d '{"segment_ids":[1, 2, 3],"timestamp":[1645671708000, 1645674288000]}' -
 ```
 curl -d '{"segment_ids":[1, 2, 3, 4, 5, 6],"timestamp":1645671708000}' -H 'Content-Type: application/json' http://localhost:8000/seq_inference
 ```
+
+## More
+I did extra works on this topic and host on **Kaggle**. In case you interested, feel free to contact me or check this:
+https://www.kaggle.com/thanhnguyen2612/traffic-flow-data-in-ho-chi-minh-city-viet-nam
